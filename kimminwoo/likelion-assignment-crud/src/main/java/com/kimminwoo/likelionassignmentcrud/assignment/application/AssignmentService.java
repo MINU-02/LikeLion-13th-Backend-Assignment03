@@ -1,6 +1,5 @@
 package com.kimminwoo.likelionassignmentcrud.assignment.application;
 
-
 import com.kimminwoo.likelionassignmentcrud.assignment.api.dto.request.AssignmentSaveRequestDto;
 import com.kimminwoo.likelionassignmentcrud.assignment.api.dto.response.AssignmentInfoResponseDto;
 import com.kimminwoo.likelionassignmentcrud.assignment.api.dto.response.AssignmentListResponseDto;
@@ -8,9 +7,9 @@ import com.kimminwoo.likelionassignmentcrud.assignment.domain.Assignment;
 import com.kimminwoo.likelionassignmentcrud.assignment.domain.repository.AssignmentRepository;
 import com.kimminwoo.likelionassignmentcrud.student.domain.Student;
 import com.kimminwoo.likelionassignmentcrud.student.domain.repository.StudentRepository;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,27 +22,31 @@ public class AssignmentService {
     private final AssignmentRepository assignmentRepository;
 
     @Transactional
-    public void assignmentSave(AssignmentSaveRequestDto assignmentSaveRequestDto) {
-        Student student = studentRepository.findById(assignmentSaveRequestDto.studentId())
-                .orElseThrow(IllegalArgumentException::new);
+    public void saveAssignment(AssignmentSaveRequestDto requestDto) {
+        Student student = studentRepository.findById(requestDto.studentId())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("해당 학생을 찾을 수 없습니다. ID: " + requestDto.studentId()));
 
         Assignment assignment = Assignment.builder()
-                .title(assignmentSaveRequestDto.title())
-                .content(assignmentSaveRequestDto.content())
+                .title(requestDto.title())
+                .content(requestDto.content())
                 .student(student)
                 .build();
+
         assignmentRepository.save(assignment);
     }
 
-    public AssignmentListResponseDto assignmentFindMember(Long studentId) {
+    public AssignmentListResponseDto getAssignmentsByStudentId(Long studentId) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() ->
+                        new IllegalArgumentException("해당 학생을 찾을 수 없습니다. ID: " + studentId));
+
         List<Assignment> assignments = assignmentRepository.findAllByStudent(student);
-        List<AssignmentInfoResponseDto> assignmentInfoResponseDtos = assignments.stream()
+
+        List<AssignmentInfoResponseDto> assignmentDtoList = assignments.stream()
                 .map(AssignmentInfoResponseDto::from)
                 .toList();
 
-        return AssignmentListResponseDto.from(assignmentInfoResponseDtos);
+        return AssignmentListResponseDto.from(assignmentDtoList);
     }
-
 }

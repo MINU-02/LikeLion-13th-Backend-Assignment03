@@ -1,6 +1,5 @@
 package com.kimminwoo.likelionassignmentcrud.assignment.api;
 
-
 import com.kimminwoo.likelionassignmentcrud.assignment.api.dto.request.AssignmentSaveRequestDto;
 import com.kimminwoo.likelionassignmentcrud.assignment.api.dto.response.AssignmentListResponseDto;
 import com.kimminwoo.likelionassignmentcrud.assignment.application.AssignmentService;
@@ -11,19 +10,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/assignment")
+@RequestMapping("/assignments")
 public class AssignmentController {
+
     private final AssignmentService assignmentService;
 
-    @PostMapping("/save")
-    public ResponseEntity<String> assignmentSave(@RequestBody AssignmentSaveRequestDto assignmentSaveRequestDto) {
-            assignmentService.assignmentSave(assignmentSaveRequestDto);
-            return new ResponseEntity<>("assignment 저장!", HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<String> saveAssignment(@RequestBody AssignmentSaveRequestDto requestDto) {
+        assignmentService.saveAssignment(requestDto);
+        return new ResponseEntity<>("과제 저장 완료", HttpStatus.CREATED);
     }
 
-    @GetMapping("/{studentId}")
-    public ResponseEntity<AssignmentListResponseDto> myAssignmentFindAll(@PathVariable("studentId") Long studentId) {
-        AssignmentListResponseDto assignmentListResponseDto = assignmentService.assignmentFindMember(studentId);
-        return new ResponseEntity<>(assignmentListResponseDto, HttpStatus.OK);
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<AssignmentListResponseDto> getAssignmentsByStudentId(@PathVariable Long studentId) {
+        return new ResponseEntity<>(assignmentService.getAssignmentsByStudentId(studentId), HttpStatus.OK);
     }
 }

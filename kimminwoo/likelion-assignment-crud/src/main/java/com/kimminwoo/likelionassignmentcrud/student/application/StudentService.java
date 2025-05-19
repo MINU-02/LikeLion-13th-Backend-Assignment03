@@ -1,6 +1,5 @@
 package com.kimminwoo.likelionassignmentcrud.student.application;
 
-
 import com.kimminwoo.likelionassignmentcrud.student.api.dto.request.StudentSaveRequestDto;
 import com.kimminwoo.likelionassignmentcrud.student.api.dto.response.StudentInfoResponseDto;
 import com.kimminwoo.likelionassignmentcrud.student.api.dto.response.StudentListResponseDto;
@@ -16,30 +15,34 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudentService {
+
     private final StudentRepository studentRepository;
 
     @Transactional
-    public void studentSave(StudentSaveRequestDto studentSaveRequestDto) {
+    public void saveStudent(StudentSaveRequestDto studentSaveRequestDto) {
         Student student = Student.builder()
                 .name(studentSaveRequestDto.name())
                 .phoneNumber(studentSaveRequestDto.phoneNumber())
                 .build();
+
         studentRepository.save(student);
     }
 
-    public StudentListResponseDto studentFindAll() {
+    public StudentListResponseDto getAllStudents() {
         List<Student> students = studentRepository.findAll();
 
-        List<StudentInfoResponseDto> studentInfoResponseDtoList = students.stream()
+        List<StudentInfoResponseDto> studentInfoList = students.stream()
                 .map(StudentInfoResponseDto::from)
                 .toList();
-        return StudentListResponseDto.from(studentInfoResponseDtoList);
+
+        return StudentListResponseDto.from(studentInfoList);
     }
 
-    public StudentInfoResponseDto studentFindOne(Long studentId) {
-        Student student = studentRepository
-                .findById(studentId)
-                .orElseThrow(IllegalArgumentException::new);
+    public StudentInfoResponseDto getStudentById(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("해당 학생을 찾을 수 없습니다. ID: " + studentId));
+
         return StudentInfoResponseDto.from(student);
     }
 }

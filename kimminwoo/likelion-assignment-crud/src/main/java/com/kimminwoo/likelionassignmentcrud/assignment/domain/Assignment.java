@@ -18,6 +18,7 @@ public class Assignment {
     private Long assignmentId;
 
     private String title;
+
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,7 +26,7 @@ public class Assignment {
     private Student student;
 
     @Builder
-    public Assignment(String title, String content, Student student) {
+    private Assignment(String title, String content, Student student) {
         this.title = title;
         this.content = content;
         this.student = student;

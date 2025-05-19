@@ -18,16 +18,17 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id")
-
     private Long studentId;
+
     private String name;
+
     private String phoneNumber;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Assignment> assignments = new ArrayList<>();
 
     @Builder
-    public Student(String name, String phoneNumber) {
+    private Student(String name, String phoneNumber) {
         this.name = name;
         this.phoneNumber = phoneNumber;
     }
